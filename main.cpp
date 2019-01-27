@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -10,7 +11,7 @@ const double NUM_TREES_TO_PRODUCE_CO2 = 8;
 const double FIVE_PERCENT = 0.05;
 const double VALUE_DECREASE_PER_FEET = 4.2;
 const double MAX_FEET_AWAY = 3200;
-const double RECREATIONAL_VALUE = 150,153.04;
+const double RECREATIONAL_VALUE = 150153.04;
 const double COMMUNITY_COHESION_BENEFITS = 5.89;
 const double PER_ACRE_PARTICULATE_CLEANUP = 4.52;
 
@@ -57,11 +58,9 @@ struct EnvironmentalDegradation
 int main ()
 {
     string fileName = "test.txt";
-    EnvironmentalDegradation obj = {};
+    EnvironmentalDegradation obj[5];
     //ofstream outputStream;
     ifstream inputStream;
-
-    cout << "Hello World!" << endl;
 
     //outputStream.open(fileName, ios::binary);
     inputStream.open(fileName, ios::binary);
@@ -82,29 +81,201 @@ int main ()
 
     if (inputStream.is_open()) 
     {
-        //inputStream.read (reinterpret_cast<char *>(&obj), sizeof (double));
+        for (int i = 0; i < 5; i++)
+        {
+            inputStream >> obj[i].priceOfCrop >> obj[i].numAcresOfFarmland >> 
+                obj[i].numPeopleImDevelopedArea >> obj[i].moneySpentOnAirPollution >> obj[i].population >>
+                obj[i].numOfIndustries >> obj[i].numAirPollutionByIndustries >> obj[i].avgWaterUsage >>
+                obj[i].co2Generated >> obj[i].co2Removed >> obj[i].tippingFee >>
+                obj[i].costOfO2 >> obj[i].numOfTrees >>
+                obj[i].propertyValue >> obj[i].bDistanceWithin500Feet >> obj[i].feetAwayFromPark >> 
+                obj[i].salesTax >> obj[i].revenueFromEventsHosted >> obj[i].numAcresOfParks >> obj[i].numPeopleInCity >>
+                obj[i].runoffReduced >> obj[i].costOfrunoffTreatment;
 
-        inputStream >> obj.priceOfCrop >> obj.numAcresOfFarmland >> 
-            obj.numPeopleImDevelopedArea >> obj.moneySpentOnAirPollution >> population >>
-            obj.numOfIndustries >> obj.numAirPollutionByIndustries >> obj.avgWaterUsage >>
-            obj.co2Generated >> obj.co2Removed >> obj.tippingFee >>
-            obj.costOfO2 >> obj.numOfTrees >>
-            obj.propertyValue >> obj.bDistanceWithin500Feet >> obj.feetAwayFromPark >> 
-            obj.salesTax >> obj.revenueFromEventsHosted >> obj.numAcresOfParks >> obj.numPeopleInCity >>
-            obj.runoffReduced >> obj.costOfrunoffTreatment;
+            obj[i].provisioningCost = obj[i].priceOfCrop * obj[i].numAcresOfFarmland;
+            obj[i].regulatoryCost = ((obj[i].moneySpentOnAirPollution / obj[i].population) * obj[i].numPeopleImDevelopedArea) + 
+                (obj[i].numPeopleImDevelopedArea * obj[i].avgWaterUsage) + (obj[i].numOfIndustries * (obj[i].moneySpentOnAirPollution / obj[i].numAirPollutionByIndustries)) +
+                (obj[i].co2Generated * obj[i].co2Removed) + (obj[i].population * obj[i].tippingFee);
+            obj[i].supportingCost = ((obj[i].co2Removed / NUM_TREES_TO_REMOVE_CO2) + (obj[i].costOfO2 / NUM_TREES_TO_PRODUCE_CO2)) * obj[i].numOfTrees;
+            obj[i].culturalCost = ((FIVE_PERCENT * obj[i].propertyValue) * obj[i].bDistanceWithin500Feet) + 
+                (VALUE_DECREASE_PER_FEET * (MAX_FEET_AWAY - obj[i].feetAwayFromPark)) + obj[i].salesTax + obj[i].revenueFromEventsHosted +
+                RECREATIONAL_VALUE + (FIVE_PERCENT * obj[i].numAcresOfParks * obj[i].numPeopleInCity) + 
+                (COMMUNITY_COHESION_BENEFITS * obj[i].numPeopleInCity) + (obj[i].runoffReduced * obj[i].costOfrunoffTreatment) + 
+                (PER_ACRE_PARTICULATE_CLEANUP * obj[i].numAcresOfParks);
 
-        obj.provisioningCost = obj.priceOfCrop * obj.numAcresOfFarmland;
-        obj.regulatoryCost = ((obj.moneySpentOnAirPollution / obj.population) * obj.numPeopleImDevelopedArea) + 
-            (obj.numPeopleImDevelopedArea * obj.avgWaterUsage) + (obj.numOfIndustries * (obj.moneySpentOnAirPollution / obj.numAirPollutionByIndustries)) +
-            (obj.co2Generated * obj.co2Removed) + (obj.population * obj.tippingFee);
-        obj.supportingCost = ((obj.co2Removed / NUM_TREES_TO_REMOVE_CO2) + (obj.costOfO2 / NUM_TREES_TO_PRODUCE_CO2)) * obj.numOfTrees;
-        obj.culturalCost = ((FIVE_PERCENT * obj.propertyValue) * obj.bDistanceWithin500Feet) + 
-            (VALUE_DECREASE_PER_FEET * (MAX_FEET_AWAY - obj.feetAwayFromPark)) + obj.salesTax + obj.revenueFromEventsHosted +
-            RECREATIONAL_VALUE + (FIVE_PERCENT * obj.numAcresOfParks * obj.numPeopleInCity) + 
-            (COMMUNITY_COHESION_BENEFITS * obj.numPeopleInCity) + (obj.runoffReduced * obj.costOfrunoffTreatment) + 
-            (PER_ACRE_PARTICULATE_CLEANUP * obj.numAcresOfParks);
-
-            obj.totalCost = obj.provisioningCost + obj.regulatoryCost + obj.supportingCost + obj.culturalCost;
+            obj[i].totalCost = obj[i].provisioningCost + obj[i].regulatoryCost + obj[i].supportingCost + obj[i].culturalCost;
+        }
+        
+            cout << "                                          ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << "TEST" << setw(8);
+            }          
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl;
+            cout << " Price Of Crop                            ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].priceOfCrop << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Num Acres Of Farmland                    ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].numAcresOfFarmland << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Num People In Developed Area             ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].numPeopleImDevelopedArea << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Money Spent On Air Pollution             ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].moneySpentOnAirPollution << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " U.S. Population                          ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].population << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Num Of Industries                        ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].numOfIndustries << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Num Air Pollution By Industries          ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].numAirPollutionByIndustries << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Average Water Usage                      "; 
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].avgWaterUsage << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " CO2 Generated                            "; 
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].co2Generated << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " CO2 Removed                              "; 
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].co2Removed << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Tipping Fee                              "; 
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].tippingFee << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Cost Of Generating O2                    "; 
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].costOfO2 << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Num Of Trees                             "; 
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].numOfTrees << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Property Value                           ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].propertyValue << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Park Within 500 Feet                     ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].bDistanceWithin500Feet << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Feet Away From Park                      ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].feetAwayFromPark << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Revenue From Sales Tax                   ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].salesTax << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Revenue From Events Hosted At Parks      ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].revenueFromEventsHosted << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Num Acres Of Parks In City               ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].numAcresOfParks << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Num People In City                       ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].numPeopleInCity << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Water Runoff Reduced By City Parks       ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].runoffReduced << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Cost Of Runoff Treatment                 ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].costOfrunoffTreatment << setw(8);
+            }
+            cout << endl;
+            cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            cout << " Total Cost                               ";
+            for (int i = 0; i < 5; i++)
+            {
+                cout << "|" << setw(12) << obj[i].totalCost << setw(8);
+            }
+            cout << endl;
+            // cout << "__________________________________________|___________________|___________________|___________________|___________________|____________" << endl; 
+            // cout << " Total Acres Used for Development Project |" << endl;
+            
         inputStream.close();
     }
     else 
