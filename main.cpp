@@ -5,13 +5,22 @@
 
 using namespace std;
 
-const double NUM_TREES_TO_REMOVE_CO2;
-const double NUM_TREES_TO_PRODUCE_CO2;
+const double NUM_TREES_TO_REMOVE_CO2 = 42;
+const double NUM_TREES_TO_PRODUCE_CO2 = 8;
+const double FIVE_PERCENT = 0.05;
+const double VALUE_DECREASE_PER_FEET = 4.2;
+const double MAX_FEET_AWAY = 3200;
+const double RECREATIONAL_VALUE = 150,153.04;
+const double COMMUNITY_COHESION_BENEFITS = 5.89;
+const double PER_ACRE_PARTICULATE_CLEANUP = 4.52;
+
 
 #pragma pack (push, 1)
 
 struct EnvironmentalDegradation
 {
+    double totalCost; // T_C
+
     double provisioningCost; // P
     double priceOfCrop; // P_C
     double numAcresOfFarmland; // P_A
@@ -89,7 +98,13 @@ int main ()
             (obj.numPeopleImDevelopedArea * obj.avgWaterUsage) + (obj.numOfIndustries * (obj.moneySpentOnAirPollution / obj.numAirPollutionByIndustries)) +
             (obj.co2Generated * obj.co2Removed) + (obj.population * obj.tippingFee);
         obj.supportingCost = ((obj.co2Removed / NUM_TREES_TO_REMOVE_CO2) + (obj.costOfO2 / NUM_TREES_TO_PRODUCE_CO2)) * obj.numOfTrees;
+        obj.culturalCost = ((FIVE_PERCENT * obj.propertyValue) * obj.bDistanceWithin500Feet) + 
+            (VALUE_DECREASE_PER_FEET * (MAX_FEET_AWAY - obj.feetAwayFromPark)) + obj.salesTax + obj.revenueFromEventsHosted +
+            RECREATIONAL_VALUE + (FIVE_PERCENT * obj.numAcresOfParks * obj.numPeopleInCity) + 
+            (COMMUNITY_COHESION_BENEFITS * obj.numPeopleInCity) + (obj.runoffReduced * obj.costOfrunoffTreatment) + 
+            (PER_ACRE_PARTICULATE_CLEANUP * obj.numAcresOfParks);
 
+            obj.totalCost = obj.provisioningCost + obj.regulatoryCost + obj.supportingCost + obj.culturalCost;
         inputStream.close();
     }
     else 
